@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 
 /* Función para devolver un error en caso de que ocurra */
 void error(const char *s);
@@ -20,9 +21,10 @@ void procesoArchivo(char *ruta, struct dirent *ent);
 
 char fullName[100];
 int bandera = 0;
+struct stat fileStat;
 
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
   /* Con un puntero a DIR abriremos el directorio */
   DIR *dir;
@@ -157,17 +159,37 @@ void procesoArchivo(char *ruta, struct dirent *ent)
   if (bandera==0){
     printf ("%30s \t%s \n", ent->d_name, strtipo);
   } else {
-    struct stat fileStat;
-    strcpy(fullName,ent->d_name);
+    
+    //strcpy(fullName,ent->d_name);
+    if(stat(ent->d_name,&fileStat) < 0){
+
+    }
+    
     
     printf("Información para %s\n",fullName);
     printf("---------------------------\n");
+    printf("ID del ownner: \t%d\n",fileStat.st_uid);
+    printf("ID del grupo del owner: \t%d\n", fileStat.st_gid);
     printf("Tamaño del archivo: \t\t%d bytes\n",fileStat.st_size);
     printf("Contador de referencias: \t%d\n",fileStat.st_nlink);
     printf("inode: \t\t%d\n",fileStat.st_ino);
     printf("Tamaño de bloque:\t%d\n", fileStat.st_blksize);
     printf("Cantidad de bloques asignado:\t%d\n", fileStat.st_blocks);
-
+    printf("Permisos: \t");
+    printf( (S_ISDIR(fileStat.st_mode)) ? "d" : "-");
+    printf( (fileStat.st_mode & S_IRUSR) ? "r" : "-");
+    printf( (fileStat.st_mode & S_IWUSR) ? "w" : "-");
+    printf( (fileStat.st_mode & S_IXUSR) ? "x" : "-");
+    printf( (fileStat.st_mode & S_IRGRP) ? "r" : "-");
+    printf( (fileStat.st_mode & S_IWGRP) ? "w" : "-");
+    printf( (fileStat.st_mode & S_IXGRP) ? "x" : "-");
+    printf( (fileStat.st_mode & S_IROTH) ? "r" : "-");
+    printf( (fileStat.st_mode & S_IWOTH) ? "w" : "-");
+    printf( (fileStat.st_mode & S_IXOTH) ? "x" : "-");
+    printf("\n\n");
+    
+    
+    
   }
   
 
