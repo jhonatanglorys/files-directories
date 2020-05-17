@@ -2,18 +2,27 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <string.h>
 
 
 void customStat();
 
-char fullName[] = "ruta/archivo.txt";
+char fullName[100];
 struct stat fileStat;
 
 int main(int argc, char **argv)
+
 {
-    
+
+    if(argc != 2)    
+        return 1;
+
+    strcpy(fullName,argv[1]);
+
     if(stat(fullName,&fileStat) < 0)    
         return 1;
+
+    
     customStat();
     return 0;
 }
